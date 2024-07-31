@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NumbersServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">numerical_data_processor</a> &gt; <a href="index.source.html" class="el_package">com.app.numbers_service.impl</a> &gt; <span class="el_source">NumbersServiceImpl.java</span></div><h1>NumbersServiceImpl.java</h1><pre class="source lang-java linenums">package com.app.numbers_service.impl;
+
+import com.app.numbers_service.Keys;
+import com.app.numbers_service.Numbers;
+import com.app.repository.impl.NumbersRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+
+/**
+ * Implementation of the Numbers service interface.
+ * Provides various operations on number lists stored in the repository.
+ */
+@RequiredArgsConstructor
+@ToString
+public class NumbersServiceImpl implements Numbers {
+
+    private final NumbersRepository numbersRepository;
+
+    /**
+     * Checks if the data is perfect based on certain conditions.
+     *
+     * @return true if the data is perfect, false otherwise.
+     */
+    public boolean isPerfect() {
+<span class="fc" id="L29">        var minListMax = minMax(numbersRepository.getNumbersByKey(Keys.MIN), Comparator.naturalOrder());</span>
+<span class="fc" id="L30">        var midListMin = minMax(numbersRepository.getNumbersByKey(Keys.MID), Comparator.reverseOrder());</span>
+<span class="fc" id="L31">        var midListMax = minMax(numbersRepository.getNumbersByKey(Keys.MID), Comparator.naturalOrder());</span>
+<span class="fc" id="L32">        var maxListMin = minMax(numbersRepository.getNumbersByKey(Keys.MAX), Comparator.reverseOrder());</span>
+
+<span class="fc bfc" id="L34" title="All 4 branches covered.">        return (minListMax &lt; midListMin) &amp;&amp; (midListMax &lt; maxListMin);</span>
+    }
+
+    /**
+     * Identifies the numbers that need to be removed to make the data perfect.
+     *
+     * @return a map containing keys and the corresponding lists of numbers to be removed.
+     */
+    public Map&lt;Keys, List&lt;Integer&gt;&gt; numbersNeedToRemoveForPerfectData() {
+<span class="fc" id="L43">        var minMidList = minMax(numbersRepository.getNumbersByKey(Keys.MID), Comparator.reverseOrder());</span>
+<span class="fc" id="L44">        var minMaxList = minMax(numbersRepository.getNumbersByKey(Keys.MAX), Comparator.reverseOrder());</span>
+
+<span class="fc" id="L46">        var firstList = numbersRepository</span>
+<span class="fc" id="L47">                .getNumbersByKey(Keys.MIN)</span>
+<span class="fc" id="L48">                .stream()</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                .filter(number -&gt; number &gt;= minMidList)</span>
+<span class="fc" id="L50">                .toList();</span>
+
+<span class="fc" id="L52">        var secondList = numbersRepository</span>
+<span class="fc" id="L53">                .getNumbersByKey(Keys.MID)</span>
+<span class="fc" id="L54">                .stream()</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                .filter(number -&gt; number &gt;= minMaxList)</span>
+<span class="fc" id="L56">                .toList();</span>
+
+<span class="fc" id="L58">        return Map.of(Keys.MIN, firstList, Keys.MID, secondList);</span>
+    }
+
+    /**
+     * Counts the numbers in the max list that are divisible by the difference
+     * between the max number of the min list and the min number of the mid list.
+     *
+     * @return the count of numbers in the max list that meet the condition.
+     */
+    public int howManyNumberInMaxListWhichAreDivisibleByDifferentBetweenMaxNumberMinListAndMinNumberMidList() {
+<span class="fc" id="L68">        return numbersInListWhichAreDivisibleByDifferentBetweenMaxFirstListMinSecondList(</span>
+<span class="fc" id="L69">                numbersRepository.getNumbersByKey(Keys.MIN),</span>
+<span class="fc" id="L70">                numbersRepository.getNumbersByKey(Keys.MID),</span>
+<span class="fc" id="L71">                numbersRepository.getNumbersByKey(Keys.MAX)).size();</span>
+    }
+
+    /**
+     * Finds keys with the longest non-decreasing arithmetic sequences.
+     *
+     * @return a list of keys with the longest non-decreasing arithmetic sequences.
+     */
+    public List&lt;Keys&gt; findKeysWithLongestNonDecreasingArithmeticSequence() {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        return createMapOfKeysAndLongestNonDecreasingSequences(numbersRepository.getAll(), (x, y) -&gt; x &gt;= y)</span>
+<span class="fc" id="L81">                .entrySet()</span>
+<span class="fc" id="L82">                .stream()</span>
+<span class="fc" id="L83">                .collect(Collectors.groupingBy(</span>
+<span class="fc" id="L84">                        map -&gt; map.getValue().size(),</span>
+<span class="fc" id="L85">                        Collectors.mapping(Map.Entry::getKey, Collectors.toList())))</span>
+<span class="fc" id="L86">                .entrySet()</span>
+<span class="fc" id="L87">                .stream()</span>
+<span class="fc" id="L88">                .max(Map.Entry.comparingByKey())</span>
+<span class="fc" id="L89">                .map(Map.Entry::getValue)</span>
+<span class="fc" id="L90">                .orElse(Collections.emptyList());</span>
+    }
+
+    /**
+     * Finds the indices with the smallest and largest differences between sorted lists.
+     *
+     * @param comparator the comparator to use for sorting.
+     * @return a map containing the indices with the smallest and largest differences.
+     * @throws IllegalArgumentException if the comparator is null.
+     */
+    public Map&lt;String, Integer&gt; getIndexWhereDifferentBetweenListsIsSmallestAndBiggestOnSortedLists(Comparator&lt;Integer&gt; comparator) {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (comparator == null) {</span>
+<span class="fc" id="L102">            throw new IllegalArgumentException(&quot;Comparator cannot be null&quot;);</span>
+        }
+<span class="fc" id="L104">        var min = getSortedNumbers(numbersRepository.getNumbersByKey(Keys.MIN), comparator);</span>
+<span class="fc" id="L105">        var mid = getSortedNumbers(numbersRepository.getNumbersByKey(Keys.MID), comparator);</span>
+<span class="fc" id="L106">        var max = getSortedNumbers(numbersRepository.getNumbersByKey(Keys.MAX), comparator);</span>
+
+<span class="fc" id="L108">        var indexSmallest = -1;</span>
+<span class="fc" id="L109">        var indexBiggest = -1;</span>
+<span class="fc" id="L110">        var differentBiggest = Integer.MIN_VALUE;</span>
+<span class="fc" id="L111">        var differentSmallest = Integer.MAX_VALUE;</span>
+
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        for (int i = 0; i &lt; min.size(); i++) {</span>
+<span class="fc" id="L114">            var differentTemp = Math.abs(min.get(i) - mid.get(i)) + Math.abs(mid.get(i) - max.get(i));</span>
+
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            if (differentTemp &lt; differentSmallest) {</span>
+<span class="fc" id="L117">                differentSmallest = differentTemp;</span>
+<span class="fc" id="L118">                indexSmallest = i;</span>
+            }
+
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (differentTemp &gt; differentBiggest) {</span>
+<span class="fc" id="L122">                differentBiggest = differentTemp;</span>
+<span class="fc" id="L123">                indexBiggest = i;</span>
+            }
+        }
+
+<span class="fc" id="L127">        return Map.of(</span>
+<span class="fc" id="L128">                &quot;Index with smallest different&quot;, indexSmallest,</span>
+<span class="fc" id="L129">                &quot;Index with biggest different&quot;, indexBiggest);</span>
+    }
+
+    /**
+     * Finds the minimum or maximum value in a list of numbers based on the provided comparator.
+     *
+     * @param numbers    the list of numbers.
+     * @param comparator the comparator to determine the min/max value.
+     * @return the min or max value.
+     * @throws NoSuchElementException if the list is empty.
+     */
+    private int minMax(List&lt;Integer&gt; numbers, Comparator&lt;Integer&gt; comparator) {
+<span class="fc" id="L141">        return numbers</span>
+<span class="fc" id="L142">                .stream()</span>
+<span class="fc" id="L143">                .max(comparator)</span>
+<span class="fc" id="L144">                .orElseThrow();</span>
+    }
+
+    /**
+     * Finds numbers in the max list that are divisible by the difference between the max number
+     * of the first list and the min number of the second list.
+     *
+     * @param minNumbers the first list of numbers.
+     * @param midNumbers the second list of numbers.
+     * @param maxNumbers the third list of numbers.
+     * @return a list of numbers from the max list that meet the condition.
+     */
+    private List&lt;Integer&gt; numbersInListWhichAreDivisibleByDifferentBetweenMaxFirstListMinSecondList(
+            List&lt;Integer&gt; minNumbers, List&lt;Integer&gt; midNumbers, List&lt;Integer&gt; maxNumbers) {
+
+<span class="fc" id="L159">        var different = differentBetweenMaxFirstListMinSecondList(minNumbers, midNumbers);</span>
+
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (different != 0) {</span>
+<span class="fc" id="L162">            return maxNumbers</span>
+<span class="fc" id="L163">                    .stream()</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    .filter(number -&gt; number % different == 0)</span>
+<span class="fc" id="L165">                    .toList();</span>
+        }
+<span class="fc" id="L167">        return List.of();</span>
+    }
+
+    /**
+     * Calculates the absolute difference between the max number of the first list
+     * and the min number of the second list.
+     *
+     * @param firstList  the first list of numbers.
+     * @param secondList the second list of numbers.
+     * @return the absolute difference.
+     */
+    private int differentBetweenMaxFirstListMinSecondList(List&lt;Integer&gt; firstList, List&lt;Integer&gt; secondList) {
+<span class="fc" id="L179">        var maxKey1 = minMax(firstList, Comparator.naturalOrder());</span>
+<span class="fc" id="L180">        var minKey2 = minMax(secondList, Comparator.reverseOrder());</span>
+
+<span class="fc" id="L182">        return Math.abs(maxKey1 - minKey2);</span>
+    }
+
+    /**
+     * Creates a map of keys and their longest non-decreasing sequences.
+     *
+     * @param numbersByKey a map of keys and their associated lists of numbers.
+     * @param predicate    the predicate to determine if a sequence is non-decreasing.
+     * @return a map of keys and their longest non-decreasing sequences.
+     */
+    private Map&lt;Keys, List&lt;Integer&gt;&gt; createMapOfKeysAndLongestNonDecreasingSequences(Map&lt;Keys, List&lt;Integer&gt;&gt; numbersByKey, BiPredicate&lt;Integer, Integer&gt; predicate) {
+<span class="fc" id="L193">        return new EnumMap&lt;&gt;(Map.of(</span>
+<span class="fc" id="L194">                Keys.MIN, findLongestNonDecreasingSequence(numbersByKey.get(Keys.MIN), predicate),</span>
+<span class="fc" id="L195">                Keys.MID, findLongestNonDecreasingSequence(numbersByKey.get(Keys.MID), predicate),</span>
+<span class="fc" id="L196">                Keys.MAX, findLongestNonDecreasingSequence(numbersByKey.get(Keys.MAX), predicate)));</span>
+    }
+
+    /**
+     * Finds the longest non-decreasing sequence in a list of numbers based on the provided predicate.
+     *
+     * @param numbers   the list of numbers.
+     * @param predicate the predicate to determine if a sequence is non-decreasing.
+     * @return the longest non-decreasing sequence.
+     */
+    private List&lt;Integer&gt; findLongestNonDecreasingSequence(List&lt;Integer&gt; numbers, BiPredicate&lt;Integer, Integer&gt; predicate) {
+<span class="fc" id="L207">        var currentSequence = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc" id="L208">        var longestSequence = new ArrayList&lt;Integer&gt;();</span>
+
+<span class="fc" id="L210">        currentSequence.add(numbers.get(0));</span>
+
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        for (int i = 1; i &lt; numbers.size(); i++) {</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">            if (predicate.test(numbers.get(i), numbers.get(i - 1))) {</span>
+<span class="fc" id="L214">                currentSequence.add(numbers.get(i));</span>
+            } else {
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                if (currentSequence.size() &gt; longestSequence.size()) {</span>
+<span class="fc" id="L217">                    longestSequence = new ArrayList&lt;&gt;(currentSequence);</span>
+                }
+<span class="fc" id="L219">                currentSequence.clear();</span>
+<span class="fc" id="L220">                currentSequence.add(numbers.get(i));</span>
+            }
+        }
+
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        if (currentSequence.size() &gt; longestSequence.size()) {</span>
+<span class="fc" id="L225">            longestSequence = new ArrayList&lt;&gt;(currentSequence);</span>
+        }
+
+<span class="fc" id="L228">        return longestSequence;</span>
+    }
+
+    /**
+     * Returns a sorted list of numbers based on the provided comparator.
+     *
+     * @param numbers    the list of numbers to sort.
+     * @param comparator the comparator to determine the sort order.
+     * @return the sorted list of numbers.
+     */
+    private List&lt;Integer&gt; getSortedNumbers(List&lt;Integer&gt; numbers, Comparator&lt;Integer&gt; comparator) {
+<span class="fc" id="L239">        return numbers</span>
+<span class="fc" id="L240">                .stream()</span>
+<span class="fc" id="L241">                .sorted(comparator)</span>
+<span class="fc" id="L242">                .toList();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

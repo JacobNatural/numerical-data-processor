@@ -1,0 +1,14 @@
+com.app
+com.app.numbers_service
+com.app.numbers_service.impl
+com.app.parser
+com.app.parser.impl
+com.app.repository
+com.app.repository.impl
+com.app.txt.load
+com.app.txt.load.generic
+com.app.txt.load.impl
+com.app.txt.transfer
+com.app.txt.transfer.impl
+com.app.validator
+com.app.validator.impl

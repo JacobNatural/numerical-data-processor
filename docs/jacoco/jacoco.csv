@@ -1,0 +1,10 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+numerical_data_processor,com.app.validator,Validator,0,15,0,2,0,4,0,2,0,1
+numerical_data_processor,com.app.numbers_service.impl,NumbersServiceImpl,0,409,0,30,0,88,0,31,0,16
+numerical_data_processor,com.app.validator.impl,NumbersValidator,0,29,0,4,0,5,0,4,0,2
+numerical_data_processor,com.app.txt.transfer.impl,TransferImpl,0,119,0,14,0,28,0,13,0,6
+numerical_data_processor,com.app.numbers_service,Keys,0,21,0,0,0,4,0,1,0,1
+numerical_data_processor,com.app.txt.load.generic,AbstractLoad,0,7,0,0,0,1,0,1,0,1
+numerical_data_processor,com.app.parser.impl,NumbersLineParser,0,61,0,6,0,17,0,4,0,1
+numerical_data_processor,com.app.txt.load.impl,NumbersLoad,0,5,0,0,0,2,0,1,0,1
+numerical_data_processor,com.app.repository.impl,NumbersRepository,0,24,0,2,0,7,0,4,0,3

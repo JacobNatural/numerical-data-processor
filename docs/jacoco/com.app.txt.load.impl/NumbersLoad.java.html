@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NumbersLoad.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">numerical_data_processor</a> &gt; <a href="index.source.html" class="el_package">com.app.txt.load.impl</a> &gt; <span class="el_source">NumbersLoad.java</span></div><h1>NumbersLoad.java</h1><pre class="source lang-java linenums">package com.app.txt.load.impl;
+
+import com.app.numbers_service.Keys;
+import com.app.parser.LineParser;
+import com.app.txt.load.generic.AbstractLoad;
+import com.app.txt.transfer.Transfer;
+import com.app.txt.load.Load;
+
+/**
+ * Concrete implementation of the {@link Load} interface for loading numbers.
+ * Inherits from {@link AbstractLoad} and provides a specific implementation for
+ * loading and parsing number data using {@link Keys} as keys and {@link Integer} as values.
+ */
+public class NumbersLoad extends AbstractLoad&lt;Keys, Integer&gt; implements Load&lt;Keys, Integer&gt; {
+
+    /**
+     * Constructs a NumbersLoad instance with the specified transfer and line parser.
+     *
+     * @param transfer the {@link Transfer} instance used for reading data from the file.
+     * @param lineParser the {@link LineParser} instance used for parsing lines of the file into key-value pairs.
+     */
+    public NumbersLoad(Transfer&lt;Keys, Integer&gt; transfer, LineParser&lt;Keys, Integer&gt; lineParser) {
+<span class="fc" id="L23">        super(transfer, lineParser);</span>
+<span class="fc" id="L24">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
