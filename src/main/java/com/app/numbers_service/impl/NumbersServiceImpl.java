@@ -26,9 +26,11 @@ public class NumbersServiceImpl implements Numbers {
      * @return true if the data is perfect, false otherwise.
      */
     public boolean isPerfect() {
+        var midNumbers = numbersRepository.getNumbersByKey(Keys.MID);
+
         var minListMax = minMax(numbersRepository.getNumbersByKey(Keys.MIN), Comparator.naturalOrder());
-        var midListMin = minMax(numbersRepository.getNumbersByKey(Keys.MID), Comparator.reverseOrder());
-        var midListMax = minMax(numbersRepository.getNumbersByKey(Keys.MID), Comparator.naturalOrder());
+        var midListMin = minMax(midNumbers, Comparator.reverseOrder());
+        var midListMax = minMax(midNumbers, Comparator.naturalOrder());
         var maxListMin = minMax(numbersRepository.getNumbersByKey(Keys.MAX), Comparator.reverseOrder());
 
         return (minListMax < midListMin) && (midListMax < maxListMin);
@@ -40,7 +42,9 @@ public class NumbersServiceImpl implements Numbers {
      * @return a map containing keys and the corresponding lists of numbers to be removed.
      */
     public Map<Keys, List<Integer>> numbersNeedToRemoveForPerfectData() {
-        var minMidList = minMax(numbersRepository.getNumbersByKey(Keys.MID), Comparator.reverseOrder());
+        var midNumbers = numbersRepository.getNumbersByKey(Keys.MID);
+
+        var minMidList = minMax(midNumbers, Comparator.reverseOrder());
         var minMaxList = minMax(numbersRepository.getNumbersByKey(Keys.MAX), Comparator.reverseOrder());
 
         var firstList = numbersRepository
@@ -49,8 +53,7 @@ public class NumbersServiceImpl implements Numbers {
                 .filter(number -> number >= minMidList)
                 .toList();
 
-        var secondList = numbersRepository
-                .getNumbersByKey(Keys.MID)
+        var secondList = midNumbers
                 .stream()
                 .filter(number -> number >= minMaxList)
                 .toList();

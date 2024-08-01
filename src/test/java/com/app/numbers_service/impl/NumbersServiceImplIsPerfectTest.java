@@ -43,8 +43,8 @@ public class NumbersServiceImplIsPerfectTest {
                 .isTrue();
 
         InOrder inOrder = Mockito.inOrder(numbersRepository);
+        inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MID);
         inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MIN);
-        inOrder.verify(numbersRepository, Mockito.calls(2)).getNumbersByKey(Keys.MID);
         inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MAX);
     }
 
@@ -66,8 +66,8 @@ public class NumbersServiceImplIsPerfectTest {
                 .isFalse();
 
         InOrder inOrder = Mockito.inOrder(numbersRepository);
+        inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MID);
         inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MIN);
-        inOrder.verify(numbersRepository, Mockito.calls(2)).getNumbersByKey(Keys.MID);
         inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MAX);
     }
 }

@@ -51,7 +51,7 @@ public class NumbersServiceImplNumbersNeedToRemoveForPerfectDataTest {
         inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MID);
         inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MAX);
         inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MIN);
-        inOrder.verify(numbersRepository, Mockito.calls(1)).getNumbersByKey(Keys.MID);
+
 
     }
 
